@@ -1,0 +1,92 @@
+/* Leonida Trophy Guide — paper light theme + night theme. System fonts only, no network. */
+:root {
+  --bg: #f6f3ee; --card: #ffffff; --ink: #1d2129; --muted: #626a75;
+  --line: #e3ddd2; --accent: #d24e2a; --accent-ink: #ffffff;
+  --platinum: #7fa8c9; --gold: #d4af5a; --silver: #aeb6bf; --bronze: #b9784c;
+  --radius: 14px; --radius-sm: 6px;
+}
+html[data-theme="night"] {
+  --bg: #0f1218; --card: #171c24; --ink: #edeae4; --muted: #8e96a3;
+  --line: #2a3040; --accent: #ff6b4a;
+  --platinum: #8fb8d8; --gold: #e0bc62; --silver: #c3c9cf; --bronze: #c98b5e;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; }
+h1, h2, .big-count { font-family: "Iowan Old Style", Palatino, Georgia, "Times New Roman", serif; }
+h1 { font-size: 2rem; margin: 0.1em 0 0.2em; letter-spacing: -0.01em; }
+h2 { font-size: 1.25rem; margin: 1.4em 0 0.4em; }
+a { color: var(--accent); }
+
+.top { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; padding: 28px 24px 8px; max-width: 1100px; margin: 0 auto; }
+.kicker { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0; }
+.sub { color: var(--muted); max-width: 56ch; margin: 0.2em 0 0; }
+.progress-block { min-width: 260px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; }
+.big-count { font-size: 2.4rem; line-height: 1; }
+.big-count .of { font-size: 1.2rem; color: var(--muted); }
+.bar { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; margin: 10px 0 6px; }
+#bar-fill { height: 100%; background: var(--accent); width: 0; transition: width 0.3s; }
+#points-line { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.grade-chips { margin: 8px 0 0; font-size: 0.85rem; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+.grade-chips b { color: var(--ink); }
+
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; max-width: 1100px; margin: 12px auto 0; padding: 0 24px; }
+.tabs button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 0.95rem; cursor: pointer; }
+.tabs button.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.pill { background: var(--accent); color: var(--accent-ink); border-radius: 10px; padding: 0 7px; font-size: 0.8rem; margin-left: 2px; }
+
+.view { display: none; max-width: 1100px; margin: 0 auto; padding: 16px 24px 24px; }
+.view.active { display: block; }
+.lede { color: var(--muted); max-width: 72ch; }
+
+.controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 4px 0 12px; }
+.controls label { font-size: 0.9rem; color: var(--muted); }
+.controls input[type="search"], .controls select { font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 6px 8px; }
+.controls input[type="search"] { width: 240px; }
+.controls button, .import { font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 6px 10px; cursor: pointer; }
+.controls button:hover, .import:hover { border-color: var(--accent); }
+.import input { display: none; }
+.summary { color: var(--muted); font-size: 0.9rem; margin: 0 0 10px; }
+
+.rows { display: flex; flex-direction: column; gap: 10px; }
+.card { display: flex; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; }
+.card:hover { border-color: var(--accent); }
+.card.earned { opacity: 0.75; }
+.card.earned .t-name { text-decoration: line-through; }
+.medal { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #1d2129; margin-top: 2px; }
+.medal.platinum { background: var(--platinum); color: #0f1218; }
+.medal.gold { background: var(--gold); }
+.medal.silver { background: var(--silver); }
+.medal.bronze { background: var(--bronze); color: #fff; }
+.card-body { flex: 1; min-width: 0; }
+.t-name { font-weight: 700; font-size: 1.05rem; }
+.t-desc { color: var(--muted); }
+.t-guide { margin-top: 6px; font-size: 0.95rem; }
+.t-meta { margin-top: 8px; font-size: 0.8rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { border: 1px solid var(--line); border-radius: 10px; padding: 0 8px; }
+.tag.warn { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.t-check { flex: 0 0 auto; width: 22px; height: 22px; accent-color: var(--accent); margin-top: 6px; cursor: pointer; }
+.spoiler-hidden .t-name, .spoiler-hidden .t-desc, .spoiler-hidden .t-guide { filter: blur(5px); user-select: none; }
+.spoiler-note { font-size: 0.85rem; color: var(--accent); margin-top: 6px; }
+
+.steps { display: flex; flex-direction: column; gap: 12px; }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+.step h3 { margin: 0 0 4px; font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 1.15rem; }
+.step p { margin: 0 0 8px; color: var(--muted); }
+.step .step-count { font-size: 0.9rem; color: var(--muted); }
+.step ul { margin: 6px 0 0; padding-left: 20px; }
+.step li.earned { color: var(--muted); text-decoration: line-through; }
+
+.detail { position: fixed; inset: 0; background: rgba(15, 18, 24, 0.55); display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px; z-index: 10; }
+.detail[hidden] { display: none; }
+.detail-card { background: var(--card); color: var(--ink); border-radius: var(--radius); max-width: 640px; width: 100%; padding: 22px 24px; position: relative; max-height: 85vh; overflow: auto; }
+#detail-close { position: absolute; top: 8px; right: 12px; font-size: 1.6rem; background: none; border: none; color: var(--muted); cursor: pointer; }
+.detail-card h2 { margin-top: 0; }
+.detail-card .sources { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+
+footer { max-width: 1100px; margin: 0 auto; padding: 8px 24px 32px; color: var(--muted); font-size: 0.85rem; }
+@media (max-width: 640px) {
+  .top { padding: 20px 16px 4px; }
+  .view, .tabs { padding-left: 16px; padding-right: 16px; }
+  .controls input[type="search"] { width: 100%; }
+  h1 { font-size: 1.6rem; }
+}

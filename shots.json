@@ -1,0 +1,35 @@
+[
+ {
+  "file": "1-checklist.jpg",
+  "path": "/?spoilers=off",
+  "viewport": {
+   "width": 1280,
+   "height": 800
+  }
+ },
+ {
+  "file": "2-roadmap.jpg",
+  "path": "/#roadmap",
+  "viewport": {
+   "width": 1280,
+   "height": 800
+  }
+ },
+ {
+  "file": "3-missables.jpg",
+  "path": "/#missables",
+  "viewport": {
+   "width": 1280,
+   "height": 800
+  }
+ },
+ {
+  "file": "4-detail.jpg",
+  "path": "/?spoilers=off",
+  "detail": 17,
+  "viewport": {
+   "width": 1280,
+   "height": 800
+  }
+ }
+]
