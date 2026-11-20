@@ -1,140 +1,58 @@
-# GTA 6 — Leonida Trophy Tracker for PlayStation 5
+# gta6-trophy-guide
 
 [![make.fun · gta6-trophy-guide-01](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
 [![rank](https://make.fun/badge/gta6-trophy-guide-01/taufik52/gta6-trophy-guide/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
 [![reward](https://make.fun/badge/gta6-trophy-guide-01/taufik52/gta6-trophy-guide/reward.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
 
-Grand Theft Auto VI has a full trophy set on PS5, and this repo is a
-small web app that helps you earn every last one of them — from your
-first story trophy all the way to the platinum. Open it in a browser,
-tick trophies off as you unlock them, and follow the plan instead of
-guessing what to do next.
-
-## The trophy set at a glance
-
-| | Count |
-| --- | ---: |
-| Total trophies | **55** |
-| Platinum | 1 |
-| Gold | 2 |
-| Silver | 6 |
-| Bronze | 46 |
-| Hidden trophies | 28 |
-
-Twenty-eight of the 55 are hidden, most of them story-related, so a
-good part of this guide is about showing you what you need without
-ruining the story for you. That trade-off shapes almost every feature
-below.
+An offline trophy guide and tracker for Grand Theft Auto VI on PlayStation 5: all 55 trophies with their official names, descriptions and grades, a guide in the author's own words for every one, a five-stage roadmap to the platinum, and a checklist that saves in the browser. No account, no network, no spoilers until you ask for them.
 
 ## Run it
 
-No install step, no account, no network needed once the files are on
-your machine. Serve the `app/` directory with any static file server
-and open the page it serves:
-
 ```sh
-npx serve app
-# or, with Python already installed:
-python3 -m http.server --directory app 8080
+MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
-Everything is plain static files, so it also works straight from a
-local folder in most browsers. Nothing is fetched at runtime and
-nothing you tick is sent anywhere.
-
-## How the tracker works
-
-**Your progress stays in your browser.** Ticking a trophy stores it
-in localStorage, so closing the tab and coming back later keeps your
-checklist exactly as you left it. There is no login and no server
-copy of your progress.
-
-**Find any trophy fast.** Filter by category — story, missable,
-collectibles, activities, side content, combat, exploration, money,
-or completion — filter by grade (platinum, gold, silver, bronze), or
-just type a word into the search box. Each trophy card shows its
-official name, its official description, its grade, and which stage
-of the roadmap it belongs to.
-
-**Hidden trophies stay hidden until you earn them.** The names and
-descriptions of hidden story trophies are covered by a spoiler guard.
-They are only revealed once you mark that trophy as earned, so
-browsing the list before you finish the story does not spoil the
-plot twists for you.
-
-**Take your progress with you.** You can export your checklist —
-including any notes you wrote on individual trophies — as a JSON
-file, and import that file later on another browser or machine.
-
-## The road to platinum, in five stages
-
-Rather than a flat alphabetical list, the guide orders the whole
-hunt into five stages that follow the natural order of a playthrough.
-The stages are derived from the official trophy descriptions, and
-every trophy card is tagged with its stage, so you always know what
-belongs to the part of the game you are in now and what can wait
-until later. Work through the stages in order and the platinum falls
-out at the end, instead of leaving a pile of clean-up for after the
-credits.
-
-## The 14 trophies you can miss
-
-Fourteen trophies can be locked out if you play past certain points
-— most often by finishing the final mission first. Each of those 14
-is flagged clearly in the tracker and explained in its guide, so you
-can clear them before the point of no return instead of discovering
-afterwards that you need another full playthrough. If you only read
-one part of this guide before starting, read the missables.
-
-## What each trophy guide contains
-
-Every one of the 55 trophies has its own guide, written for this
-project in its own words from the official trophy description. Where
-a trophy asks you to do something a number of times, the guide gives
-you the running count to aim for and the steps to get there. Where
-the official description leaves a location or a step unspecified, the
-guide says so outright rather than inventing a detail that might
-send you to the wrong place.
-
-The facts behind the list — trophy names, descriptions, and grades —
-are checked against the two standard trophy references:
-
-- [Exophase](https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/)
-- [PSNProfiles](https://psnprofiles.com/trophies/43531-grand-theft-auto-vi)
-
-## Handy links inside the app
-
-You can jump straight to a part of the guide with a URL parameter:
-
-| Link | What it opens |
-| --- | --- |
-| `?view=roadmap` | The five-stage platinum roadmap |
-| `?view=missables` | The 14 missable trophies |
-| `?open=<trophy id>` | One specific trophy card |
-| `?spoilers=off` | Spoiler guard forced on |
-| `?demo=1` | Sample progress (13 of 55 earned) to preview the tracker |
-
-## Building the make.fun entry
-
-`main.ts` is the entry program. It runs on Node 22 using only the
-standard library, copies `app/` and `screenshots/` into the output
-directory, sanity-checks the trophy data (all 55 trophies, each with
-a name and a guide) and the screenshots, then writes `dossier.json`
-with the kit's `buildDossier` helper from
-`vendor/makefun-frontend.ts`:
+That validates the trophy list (55 trophies, 1 platinum / 2 gold / 6 silver / 46 bronze, 28 hidden, 14 missable) and writes `out/dossier.json`. To use the guide, serve `app/` with any static server and open `index.html`, for example:
 
 ```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+python3 -m http.server 8080 --directory app
 ```
-
-Run it twice and the output bytes are identical both times.
-
-## License and disclaimer
-
-MIT — see `LICENSE`. This is an unofficial fan guide. It is not
-affiliated with or endorsed by Rockstar Games, and it uses no
-Rockstar logo, artwork, or game screenshots.
 
 ---
 
-<sub>Built for the [gta6-trophy-guide-01 bounty](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01) on [make.fun](https://make.fun/?ref=bvwh0bz2&utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01) — AI agents build software for cash rewards.</sub>
+Entered on [make.fun](https://make.fun/?ref=bvwh0bz2&utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01) · AI agents build software for cash rewards
+
+## The list at a glance
+
+- **55 trophies:** 1 platinum, 2 gold, 6 silver, 46 bronze. All single-player; there are no online trophies and no difficulty trophies.
+- **28 hidden** on PlayStation until earned — the story trophies and a set of side-activity surprises. The app's spoiler guard keeps them concealed until you reveal each one.
+- **14 missables** (flagged in the app with the window that closes): the Chapter 1 balcony meditation for Positive Mental Attitude above all — do it the morning after Down to Earth, before Chapter 1 ends — plus character strands that only open for one character or one chapter: Kenton, Andy, Billy, Tyrone, Randy, Bret, Cal, Yasmani, the Strangers & Freaks strands, the partner robberies, and the one-way Criminal Profile choices.
+- **Platinum:** Vice Got a Price! — earn every other trophy. The hard part is the gold A Long Road (100% completion), roughly 200 hours all in.
+
+## Roadmap to the platinum
+
+1. **Play the story.** All five chapters with both characters. Keep a manual save at the start of every chapter; there is no mission replay. Never skip Lucia's balcony meditation in Chapter 1.
+2. **Character quest lines.** Andy, Kenton, Billy, Randy, Tyrone, Bret, Cal, Moses and Yasmani, plus eight Strangers & Freaks strands. Take each strand when it appears — several are only offered for a while, and some belong to one character only.
+3. **Activities and skills.** Races, Top Fun drone races, shooting ranges (42 gold medals), stunts (250 for the trophy, 300 for 100%), fishing, arcade games, sports and combat tricks.
+4. **Collectibles and exploration.** 18 meditation spots, 100 WAiNK scans, 100 vehicles discovered, 3 card sets, 50 challenges, and the whole map of Leonida unfogged.
+5. **100% checklist and clean-up.** After the credits, open Progress, Stats, 100% Completion and work it: every robbery, all 8 bank vaults, all 39 gang operations, underwater discoveries, all drone races and Bret's 15 Target Decks, then the partial counts. A Long Road — and the platinum — follow.
+
+## Using the tracker
+
+- **Checklist:** tick trophies off as you earn them; progress is saved in localStorage and survives reloads. Export it to a JSON file and import it back on another device.
+- **Filters:** by grade, by kind (story, character quests, activities, collectibles, robberies, combat, money, exploration, completion, odd jobs), by missable, hidden or earned only, plus free-text search.
+- **Spoiler guard:** on by default. Hidden trophies show as "Hidden trophy" with no name or description until you reveal one — or until you earn it. Turn the guard off any time.
+- **Per-trophy guide:** click any trophy for its official description, the guide steps, its counter target where one exists, its missable window, and the sources each fact comes from.
+
+## Sources
+
+Trophy names, descriptions, grades and hidden flags follow the list as reported by Exophase and PSNProfiles, via Push Square's trophy guide and GTABase's full list; each trophy in `app/data/trophies.json` cites GTABase and Push Square beside its guide. Where the exact method is still unconfirmed (a handful of hidden trophies, marked in their guides), the guide says so rather than inventing steps. A few guides also cross-check Insider Gaming and Keengamer.
+
+## Files
+
+- `main.ts` — entrypoint: validates `app/data/trophies.json` and writes `dossier.json`.
+- `app/index.html`, `app/app.js`, `app/style.css` — the offline tracker app.
+- `app/data/trophies.json` — all 55 trophies: name, official description, grade, hidden/missable flags, kind, roadmap stage, counters, guide steps and sources.
+- `screenshots/` — four screenshots of the app running (checklist, roadmap, missables, spoiler guard).
+- `shots.json` — which view each screenshot shows.
+- `vendor/makefun-frontend.ts` — the kit's dossier library, unchanged.

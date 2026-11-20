@@ -1,148 +1,146 @@
-/**
- * Leonida Trophy Guide — entry program (make.fun program/v1).
- *
- * What it does, in plain terms: it takes the guide that lives in this
- * repository (app/ and screenshots/), copies both into the output
- * directory, checks the trophy data and the screenshots look sane, and
- * writes output/dossier.json with the kit's buildDossier library.
- *
- * It runs on Node 22 with the standard library only. Outside the grader,
- * MAKEFUN_OUTPUT_DIR stands in for /output. Run it twice and the bytes
- * in the output directory are the same both times.
- */
+// GTA 6 trophy guide — entrypoint (Node 22+, standard library only).
+//
+// What it does, in order:
+//   1. Reads app/data/trophies.json and validates the whole list:
+//      55 trophies, 1 platinum / 2 gold / 6 silver / 46 bronze,
+//      28 hidden, 14 missable, every trophy with a non-empty name,
+//      official description and guide of its own, no duplicate names.
+//   2. Copies app/ and screenshots/ beside this file into the output
+//      directory (/output, or MAKEFUN_OUTPUT_DIR outside the grader).
+//   3. Writes /output/dossier.json with the vendored make.fun library,
+//      so the dossier is byte for byte what the scorer rebuilds.
+//      vendor/makefun-frontend.ts is the kit's copy, unchanged.
+//
+// Run it:  mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// Serve the app locally with any static server pointed at app/.
 
-import { copyFile, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDossier } from "./vendor/makefun-frontend.ts";
 
-/** The repository root: the folder this file lives in. */
-const REPO_ROOT = dirname(fileURLToPath(import.meta.url));
+const here = fileURLToPath(new URL(".", import.meta.url));
+const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+const dataPath = join(here, "app", "data", "trophies.json");
 
-/** Where the entry goes: the grader's /output, or MAKEFUN_OUTPUT_DIR locally. */
-const OUTPUT_DIR = resolve(process.env.MAKEFUN_OUTPUT_DIR ?? "/output");
+type Trophy = {
+  name?: unknown;
+  description?: unknown;
+  grade?: unknown;
+  guide?: unknown;
+  hidden?: unknown;
+  missable?: unknown;
+  kind?: unknown;
+  stage?: unknown;
+  steps?: unknown;
+  sources?: unknown;
+  counter?: unknown;
+};
 
-/** The caps this bounty holds the entry to (RULES.txt, "The gate"). */
-const DOSSIER_CAPS = {
+function fail(message: string): never {
+  console.error("main.ts: validation failed: " + message);
+  process.exit(1);
+}
+
+function isNonEmptyText(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function validateTrophies(): Trophy[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(readFileSync(dataPath, "utf8"));
+  } catch (err) {
+    fail("app/data/trophies.json is not valid JSON: " + (err as Error).message);
+  }
+  const list = (parsed as { trophies?: unknown }).trophies;
+  if (!Array.isArray(list)) fail('trophies.json must hold an object with a "trophies" array');
+  if (list.length !== 55) fail("expected 55 trophies, found " + list.length);
+
+  const grades: Record<string, number> = { platinum: 0, gold: 0, silver: 0, bronze: 0 };
+  let hidden = 0;
+  let missable = 0;
+  const seen = new Set<string>();
+  for (const item of list as Trophy[]) {
+    if (!isNonEmptyText(item.name)) fail("a trophy is missing its name");
+    if (seen.has(item.name)) fail("duplicate trophy name: " + item.name);
+    seen.add(item.name);
+    if (!isNonEmptyText(item.description)) fail(item.name + ": missing official description");
+    if (!isNonEmptyText(item.guide)) fail(item.name + ": missing guide text");
+    if (typeof item.grade !== "string" || !(item.grade in grades)) {
+      fail(item.name + ": grade must be platinum, gold, silver or bronze");
+    }
+    grades[item.grade as string] += 1;
+    if (item.hidden === true) hidden += 1;
+    if (item.missable === true) missable += 1;
+    if (typeof item.stage !== "number" || item.stage < 1 || item.stage > 5) {
+      fail(item.name + ": roadmap stage must be 1-5");
+    }
+    if (!Array.isArray(item.steps) || item.steps.length === 0) {
+      fail(item.name + ": guide needs at least one step");
+    }
+    if (!Array.isArray(item.sources) || item.sources.length === 0) {
+      fail(item.name + ": guide needs at least one cited source");
+    }
+  }
+  if (grades.platinum !== 1 || grades.gold !== 2 || grades.silver !== 6 || grades.bronze !== 46) {
+    fail(
+      "grade split must be 1 platinum / 2 gold / 6 silver / 46 bronze, found " +
+        grades.platinum + "/" + grades.gold + "/" + grades.silver + "/" + grades.bronze,
+    );
+  }
+  if (hidden !== 28) fail("expected 28 hidden trophies, found " + hidden);
+  if (missable !== 14) fail("expected 14 missable trophies, found " + missable);
+
+  console.log(
+    "trophies: 55 (platinum " + grades.platinum + ", gold " + grades.gold +
+      ", silver " + grades.silver + ", bronze " + grades.bronze +
+      ", hidden " + hidden + ", missable " + missable + ")",
+  );
+  return list as Trophy[];
+}
+
+function copyTree(source: string, target: string): void {
+  if (!existsSync(source)) return;
+  mkdirSync(target, { recursive: true });
+  cpSync(source, target, { recursive: true });
+}
+
+function countScreenshots(): number {
+  const dir = join(here, "screenshots");
+  if (!existsSync(dir)) return 0;
+  return (readdirSync(dir) as string[]).filter((name) => /\.(png|jpe?g)$/i.test(name)).length;
+}
+
+const trophies = validateTrophies();
+
+const shotCount = countScreenshots();
+if (shotCount === 0) {
+  console.error("main.ts: screenshots/ holds no image yet — take 3 or 4 screenshots of the app first (see shots.json), then run again.");
+  process.exit(1);
+}
+if (shotCount > 4) {
+  console.error("main.ts: screenshots/ holds " + shotCount + " images, at most 4 are allowed.");
+  process.exit(1);
+}
+console.log("screenshots: " + shotCount);
+
+mkdirSync(outDir, { recursive: true });
+copyTree(join(here, "app"), join(outDir, "app"));
+copyTree(join(here, "screenshots"), join(outDir, "screenshots"));
+
+// The scorer's own caps: only text_max_bytes shapes the bytes; the rest
+// refuse an entry the scorer would refuse (more than 4 screenshots or one
+// over 256 KiB; more than 993 files and directories in app/, or 48 MiB).
+const dossier = buildDossier(outDir, {
   text_max_bytes: 163840,
   screenshots: { max: 4, max_bytes: 262144 },
   app_max_files: 993,
-  app_max_bytes: 48 * 1024 * 1024,
-  app_path_max_bytes: 1000,
-};
-
-/** Trophy names the gate checks for (official list, 55 trophies). */
-const EXPECTED_TROPHY_COUNT = 55;
-
-/** Small log helper so a run's progress is visible without touching output. */
-function logLine(message: string): void {
-  const stamp = new Date().toISOString();
-  process.stdout.write(`[leonida-guide ${stamp}] ${message}\n`);
-}
-
-/**
- * Copy one directory tree into another, file by file, creating folders as
- * needed. Symbolic links are refused: the gate only accepts plain files.
- */
-async function copyTree(sourceDir: string, targetDir: string): Promise<number> {
-  await mkdir(targetDir, { recursive: true });
-  let copied = 0;
-  const entries = await readdir(sourceDir, { withFileTypes: true });
-  entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-  for (const entry of entries) {
-    const from = join(sourceDir, entry.name);
-    const to = join(targetDir, entry.name);
-    if (entry.isDirectory()) {
-      copied += await copyTree(from, to);
-    } else if (entry.isFile()) {
-      await copyFile(from, to);
-      copied += 1;
-    } else {
-      throw new Error(`copyTree: refusing non-regular entry ${from}`);
-    }
-  }
-  return copied;
-}
-
-/**
- * Read app/data/trophies.json and check it holds the full official list:
- * 55 trophies, each with a name and a non-blank guide. This is the same
- * shape the gate checks, so a mistake here fails loudly before submitting.
- */
-async function checkTrophyData(appDir: string): Promise<void> {
-  const raw = await readFile(join(appDir, "data", "trophies.json"), "utf8");
-  const data = JSON.parse(raw) as {
-    trophies?: Array<{ name?: unknown; guide?: unknown }>;
-  };
-  const trophies = data.trophies ?? [];
-  if (trophies.length !== EXPECTED_TROPHY_COUNT) {
-    throw new Error(
-      `checkTrophyData: expected ${EXPECTED_TROPHY_COUNT} trophies, found ${trophies.length}`,
-    );
-  }
-  const broken = trophies.filter(
-    (t) => typeof t.name !== "string" || !t.name.trim() || typeof t.guide !== "string" || !t.guide.trim(),
-  );
-  if (broken.length > 0) {
-    throw new Error(`checkTrophyData: ${broken.length} trophies lack a name or a guide`);
-  }
-  logLine(`trophy data OK: ${trophies.length} trophies, every one with a guide`);
-}
-
-/** Check the copied app tree has an entry page before buildDossier runs. */
-async function checkAppShell(appDir: string): Promise<void> {
-  const info = await stat(join(appDir, "index.html"));
-  if (!info.isFile()) {
-    throw new Error("checkAppShell: app/index.html is not a regular file");
-  }
-  logLine("app shell OK: app/index.html present");
-}
-
-/** Check screenshots/ holds 3 or 4 PNG/JPEG files within the size cap. */
-async function checkScreenshots(shotsDir: string): Promise<string[]> {
-  const entries = (await readdir(shotsDir, { withFileTypes: true }))
-    .filter((e) => e.isFile() && !e.name.startsWith("."))
-    .map((e) => e.name)
-    .sort();
-  if (entries.length < 3 || entries.length > 4) {
-    throw new Error(`checkScreenshots: expected 3 or 4 screenshots, found ${entries.length}`);
-  }
-  for (const name of entries) {
-    const info = await stat(join(shotsDir, name));
-    if (info.size > DOSSIER_CAPS.screenshots.max_bytes) {
-      throw new Error(`checkScreenshots: ${name} is ${info.size} bytes, over the 256 KiB cap`);
-    }
-  }
-  logLine(`screenshots OK: ${entries.join(", ")}`);
-  return entries;
-}
-
-/** Empty the output directory so a stale file can never leak into an entry. */
-async function cleanOutput(dir: string): Promise<void> {
-  await rm(dir, { recursive: true, force: true });
-  await mkdir(dir, { recursive: true });
-}
-
-async function main(): Promise<void> {
-  logLine(`building from ${REPO_ROOT} into ${OUTPUT_DIR}`);
-  await cleanOutput(OUTPUT_DIR);
-
-  const appCopied = await copyTree(join(REPO_ROOT, "app"), join(OUTPUT_DIR, "app"));
-  const shotsCopied = await copyTree(join(REPO_ROOT, "screenshots"), join(OUTPUT_DIR, "screenshots"));
-  logLine(`copied ${appCopied} app files and ${shotsCopied} screenshots`);
-
-  await checkTrophyData(join(OUTPUT_DIR, "app"));
-  await checkAppShell(join(OUTPUT_DIR, "app"));
-  await checkScreenshots(join(OUTPUT_DIR, "screenshots"));
-
-  const dossier = buildDossier(OUTPUT_DIR, DOSSIER_CAPS);
-  await writeFile(join(OUTPUT_DIR, "dossier.json"), dossier);
-  logLine(`dossier.json written (${dossier.byteLength} bytes)`);
-  logLine("build complete");
-}
-
-main().catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
-  process.stderr.write(`[leonida-guide] build failed: ${message}\n`);
-  process.exit(1);
+  app_max_bytes: 50331648,
 });
+writeFileSync(join(outDir, "dossier.json"), dossier);
+
+const dossierBytes = statSync(join(outDir, "dossier.json")).size;
+console.log("trophies validated: " + trophies.length);
+console.log("dossier.json written: " + dossierBytes + " bytes -> " + join(outDir, "dossier.json"));
+console.log("done.");
