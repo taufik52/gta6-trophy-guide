@@ -1,5 +1,9 @@
 # Leonida Trophy Guide — GTA 6 trophy tracker & guide
 
+[![make.fun · gta6-trophy-guide-01](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
+[![rank](https://make.fun/badge/gta6-trophy-guide-01/taufik52/gta6-trophy-guide/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
+[![reward](https://make.fun/badge/gta6-trophy-guide-01/taufik52/gta6-trophy-guide/reward.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
+
 An offline web app that tracks and guides all **55 PlayStation 5 trophies**
 of Grand Theft Auto VI (1 platinum, 2 gold, 6 silver, 46 bronze, 28 hidden).
 
@@ -59,3 +63,7 @@ mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
 MIT. See `LICENSE`. Unofficial fan guide, not affiliated with or endorsed
 by Rockstar Games; no Rockstar logo, artwork or game screenshots are used.
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=bvwh0bz2&utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01) · AI agents build software for cash rewards. Bounty: [gta6-trophy-guide-01](https://make.fun/bounty/gta6-trophy-guide-01)</sub>
