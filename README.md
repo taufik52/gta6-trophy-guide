@@ -4,7 +4,7 @@
 [![rank](https://make.fun/badge/gta6-trophy-guide-01/taufik52/gta6-trophy-guide/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
 [![reward](https://make.fun/badge/gta6-trophy-guide-01/taufik52/gta6-trophy-guide/reward.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
 
-An offline trophy guide and tracker for Grand Theft Auto VI on PlayStation 5: all 55 trophies with their official names, descriptions and grades, a guide in the author's own words for every one, a five-stage roadmap to the platinum, and a checklist that saves in the browser. No account, no network, no spoilers until you ask for them.
+An offline trophy guide and tracker for Grand Theft Auto VI on PlayStation 5. It covers all 55 trophies — official names, descriptions and grades, a guide written in the author's own words for every single one, a five-stage roadmap to the platinum, and a checklist that remembers your progress in the browser. No account, no network, and no spoilers until you ask for them.
 
 ## Run it
 
@@ -12,7 +12,7 @@ An offline trophy guide and tracker for Grand Theft Auto VI on PlayStation 5: al
 MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
-That validates the trophy list (55 trophies, 1 platinum / 2 gold / 6 silver / 46 bronze, 28 hidden, 14 missable) and writes `out/dossier.json`. To use the guide, serve `app/` with any static server and open `index.html`, for example:
+That checks the trophy list end to end (55 trophies, 1 platinum / 2 gold / 6 silver / 46 bronze, 28 hidden, 14 missable), cross-checks `shots.json` against the files in `screenshots/`, and writes `out/dossier.json`. To actually use the guide, serve `app/` with any static server and open `index.html`, for example:
 
 ```sh
 python3 -m http.server 8080 --directory app
@@ -24,9 +24,9 @@ Entered on [make.fun](https://make.fun/?ref=bvwh0bz2&utm_source=github&utm_mediu
 
 ## The list at a glance
 
-- **55 trophies:** 1 platinum, 2 gold, 6 silver, 46 bronze. All single-player; there are no online trophies and no difficulty trophies.
-- **28 hidden** on PlayStation until earned — the story trophies and a set of side-activity surprises. The app's spoiler guard keeps them concealed until you reveal each one.
-- **14 missables** (flagged in the app with the window that closes): the Chapter 1 balcony meditation for Positive Mental Attitude above all — do it the morning after Down to Earth, before Chapter 1 ends — plus character strands that only open for one character or one chapter: Kenton, Andy, Billy, Tyrone, Randy, Bret, Cal, Yasmani, the Strangers & Freaks strands, the partner robberies, and the one-way Criminal Profile choices.
+- **55 trophies:** 1 platinum, 2 gold, 6 silver, 46 bronze. Everything is single-player — there are no online trophies and no difficulty trophies.
+- **28 hidden** on PlayStation until you earn them: the story trophies plus a set of side-activity surprises. The app's spoiler guard keeps them concealed until you reveal each one.
+- **14 missables**, each flagged in the app together with the window that closes. The one that matters most is the Chapter 1 balcony meditation for Positive Mental Attitude — do it the morning after Down to Earth, before Chapter 1 ends. The rest are character strands that only open for one character or one chapter (Kenton, Andy, Billy, Tyrone, Randy, Bret, Cal, Yasmani), the Strangers & Freaks strands, the partner robberies, and the one-way Criminal Profile choices.
 - **Platinum:** Vice Got a Price! — earn every other trophy. The hard part is the gold A Long Road (100% completion), roughly 200 hours all in.
 
 ## Roadmap to the platinum
